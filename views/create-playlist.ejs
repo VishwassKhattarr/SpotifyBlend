@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Playlist</title>
+  <link rel="stylesheet" href="/styles/create-playlist.css" />
+</head>
+<body>
+
+  <!-- 🔝 NAVIGATION BAR -->
+  <nav class="navbar">
+    <div class="logo">🎵 MySpotify</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/my-playlists">My Playlists</a></li>
+      
+      <li><a href="/my-friends">My Friends</a></li>
+    </ul>
+  </nav>
+
+  <!-- 📦 FORM CONTAINER -->
+  <div class="container">
+    <h2>Create a New Playlist</h2>
+    <form action="/create-playlist" method="POST" class="playlist-form">
+      <label for="name">Playlist Name:</label>
+      <input type="text" id="name" name="name" placeholder="Enter playlist name" required />
+
+      <label for="description">Description:</label>
+      <textarea id="description" name="description" placeholder="Add a short description..."></textarea>
+
+      <button type="submit">Create Playlist</button>
+    </form>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+/* Reset and general setup */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: linear-gradient(-45deg, #1db954, #191414, #1db954, #191414);
+  background-size: 400% 400%;
+  animation: gradientBG 10s ease infinite;
+  font-family: 'Segoe UI', sans-serif;
+  color: white;
+  min-height: 100vh;
+}
+
+/* Matching navbar styles from index.css */
+.navbar {
+  width: 100%;
+  padding: 15px 30px;
+  background-color: rgba(25, 20, 20, 0.85);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1db954;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links li a {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-links li a:hover {
+  color: #1db954;
+}
+
+/* Gradient animation */
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* About Section Styles */
+.about-container {
+  text-align: center;
+  padding: 30px;
+  padding-top: 100px; /* To avoid overlap with fixed navbar */
+}
+
+.about-heading {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.team {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  flex-wrap: wrap;
+}
+
+.team-member {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.profile-pic {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.team-member:hover .profile-pic {
+  transform: scale(1.1);
+}
+
+
+.about-container p {
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+}
+
+
+.member-info {
+  font-size: 16px;
+}
+
+.member-name {
+  font-weight: bold;
+}
+
+.member-roll {
+  color: #ccc;
+}
+
+/* Hover Effects for Team Members */
+.team-member:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+  
