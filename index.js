@@ -1,4 +1,5 @@
 import express from "express"
+import session from 'express-session';
 import bodyParser from "body-parser"
 import session from "express-session";
 import { verifyUserLogin, insertUser } from "./login.js";
