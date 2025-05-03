@@ -3,15 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Friends - Spotify Vibe</title>
+  <title>Login / Signup - Spotify Vibe</title>
   <link rel="stylesheet" href="/styles/index.css" />
   <style>
-    .friend-list {
-      list-style-type: none;
-      padding-left: 0;
+    .error-message {
+      color: red;
     }
-    .friend-list li {
-      margin-bottom: 5px;
+    .hidden {
+      display: none;
+    }
+    .toggle-buttons {
+      margin-bottom: 20px;
+    }
+    .toggle-buttons button {
+      margin-right: 10px;
+      padding: 8px 16px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -34,187 +41,69 @@
 
   <main class="main-content">
     <div class="container">
-      <h2>My Friends</h2>
-      <% if (error) { %>
-        <p class="error-message"><%= error %></p>
-      <% } else if (friends && friends.length > 0) { %>
-        <ul class="friend-list">
-          <% friends.forEach(function(friend) { %>
-            <li data-friend-id="<%= friend.UserID %>"><%= friend.Firstname %> <%= friend.Lastname %> (<%= friend.Username %>)</li>
-          <% }); %>
-        </ul>
-      <% } else { %>
-        <p>You have no friends added yet.</p>
-      <% } %>
+      <div class="toggle-buttons">
+        <button id="login-toggle" type="button">Login</button>
+        <button id="signup-toggle" type="button">Signup</button>
+      </div>
+
+      <div id="login-section">
+        <h2>Login</h2>
+        <% if (error && errorType === 'login') { %>
+          <p class="error-message"><%= error %></p>
+        <% } %>
+        <form action="/login" method="POST" id="login-form">
+          <label for="login-username">Username:</label>
+          <input type="text" id="login-username" name="username" required />
+          <label for="login-password">Password:</label>
+          <input type="password" id="login-password" name="password" required />
+          <button type="submit">Login</button>
+        </form>
+      </div>
+
+      <div id="signup-section" class="hidden">
+        <h2>Signup</h2>
+        <% if (error && errorType === 'signup') { %>
+          <p class="error-message"><%= error %></p>
+        <% } %>
+        <form action="/signup" method="POST" id="signup-form">
+          <label for="firstname">First Name:</label>
+          <input type="text" id="firstname" name="Firstname" required />
+          <label for="lastname">Last Name:</label>
+          <input type="text" id="lastname" name="Lastname" required />
+          <label for="signup-username">Username:</label>
+          <input type="text" id="signup-username" name="Username" required />
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="EmailID" required />
+          <label for="signup-password">Password:</label>
+          <input type="password" id="signup-password" name="Phoneno" required />
+          <button type="submit">Signup</button>
+        </form>
+      </div>
     </div>
   </main>
 
-  <section id="friend-suggestions-section" style="margin-top: 20px;">
-    <h2>Friend Suggestions</h2>
-    <ul id="friend-suggestions-list"></ul>
-  </section>
-
-  <section id="common-songs-section" style="margin-top: 20px;">
-    <h3 id="common-songs-title">Common Songs with Selected Friend</h3>
-    <ul id="common-songs-list"></ul>
-  </section>
-
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const friendItems = document.querySelectorAll('.friend-list li');
-      const commonSongsList = document.getElementById('common-songs-list');
-      const commonSongsSection = document.getElementById('common-songs-section');
-      const friendSuggestionsList = document.getElementById('friend-suggestions-list');
+    const loginToggle = document.getElementById('login-toggle');
+    const signupToggle = document.getElementById('signup-toggle');
+    const loginSection = document.getElementById('login-section');
+    const signupSection = document.getElementById('signup-section');
 
-      // Hide common songs section initially
-      commonSongsSection.style.display = 'none';
-
-      // Load friend suggestions from backend
-      async function loadFriendSuggestions() {
-        try {
-          const response = await fetch('/friend-suggestions');
-          if (!response.ok) {
-            throw new Error('Failed to fetch friend suggestions');
-          }
-          const data = await response.json();
-          const suggestions = data.suggestions;
-
-          friendSuggestionsList.innerHTML = '';
-
-          if (suggestions.length === 0) {
-            friendSuggestionsList.innerHTML = '<li>No friend suggestions available.</li>';
-          } else {
-            suggestions.forEach(friend => {
-              const li = document.createElement('li');
-              li.textContent = `${friend.Firstname} ${friend.Lastname} (${friend.Username}) `;
-              li.setAttribute('data-friend-id', friend.UserID);
-
-              const addButton = document.createElement('button');
-              addButton.textContent = 'Add Friend';
-              addButton.style.marginLeft = '10px';
-              addButton.addEventListener('click', async () => {
-                try {
-                  const res = await fetch('/add-friend', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ friendId: friend.UserID })
-                  });
-                  if (!res.ok) {
-                    throw new Error('Failed to add friend');
-                  }
-                  // Remove from suggestions
-                  friendSuggestionsList.removeChild(li);
-
-                  // Add to friends list dynamically
-                  addFriendToList(friend);
-                } catch (error) {
-                  alert('Error adding friend: ' + error.message);
-                }
-              });
-
-              li.appendChild(addButton);
-              friendSuggestionsList.appendChild(li);
-            });
-          }
-        } catch (error) {
-          friendSuggestionsList.innerHTML = '<li>Error loading friend suggestions.</li>';
-        }
-      }
-
-      // Add friend to friends list dynamically
-      function addFriendToList(friend) {
-        const friendsList = document.querySelector('.friend-list');
-        if (!friendsList) return;
-
-        const li = document.createElement('li');
-        li.textContent = `${friend.Firstname} ${friend.Lastname} (${friend.Username})`;
-        li.setAttribute('data-friend-id', friend.UserID);
-        li.style.cursor = 'pointer';
-
-        // Add click event to fetch common songs
-        li.addEventListener('click', async () => {
-          const friendId = li.getAttribute('data-friend-id');
-          if (!friendId) return;
-
-          const friendName = li.textContent.trim();
-
-          try {
-            const response = await fetch(`/friends/${friendId}/common-songs`);
-            if (!response.ok) {
-              throw new Error('Failed to fetch common songs');
-            }
-            const data = await response.json();
-            const songs = data.songs;
-
-            const title = document.getElementById('common-songs-title');
-            title.textContent = `Your BLEND with ${friendName}`;
-
-            commonSongsList.innerHTML = '';
-
-            if (songs.length === 0) {
-              commonSongsList.innerHTML = '<li>No common songs found.</li>';
-            } else {
-              songs.forEach(song => {
-                const li = document.createElement('li');
-                li.textContent = song.Title;
-                commonSongsList.appendChild(li);
-              });
-            }
-
-            commonSongsSection.style.display = 'block';
-          } catch (error) {
-            alert('Error loading common songs: ' + error.message);
-          }
-        });
-
-        friendsList.appendChild(li);
-      }
-
-      // Attach click event to existing friends
-      friendItems.forEach(item => {
-        item.style.cursor = 'pointer';
-        item.addEventListener('click', async () => {
-          const friendId = item.getAttribute('data-friend-id');
-          if (!friendId) return;
-
-          const friendName = item.textContent.trim();
-
-          try {
-            const response = await fetch(`/friends/${friendId}/common-songs`);
-            if (!response.ok) {
-              throw new Error('Failed to fetch common songs');
-            }
-            const data = await response.json();
-            const songs = data.songs;
-
-            const title = document.getElementById('common-songs-title');
-            title.textContent = `Your BLEND with ${friendName}`;
-
-            commonSongsList.innerHTML = '';
-
-            if (songs.length === 0) {
-              commonSongsList.innerHTML = '<li>No common songs found.</li>';
-            } else {
-              songs.forEach(song => {
-                const li = document.createElement('li');
-                li.textContent = song.Title;
-                commonSongsList.appendChild(li);
-              });
-            }
-
-            commonSongsSection.style.display = 'block';
-          } catch (error) {
-            alert('Error loading common songs: ' + error.message);
-          }
-        });
-      });
-
-      // Load friend suggestions on page load
-      loadFriendSuggestions();
+    loginToggle.addEventListener('click', () => {
+      loginSection.classList.remove('hidden');
+      signupSection.classList.add('hidden');
     });
+
+    signupToggle.addEventListener('click', () => {
+      signupSection.classList.remove('hidden');
+      loginSection.classList.add('hidden');
+    });
+
+    // If errorType is signup, show signup form by default
+    const errorType = "<%= errorType || '' %>";
+    if (errorType === 'signup') {
+      signupSection.classList.remove('hidden');
+      loginSection.classList.add('hidden');
+    }
   </script>
 </body>
 </html>
-</create_file>

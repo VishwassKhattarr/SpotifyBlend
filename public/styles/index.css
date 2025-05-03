@@ -160,3 +160,43 @@ h1 {
 .create-btn:hover {
   background-color: #14833b;
 }
+
+/* My Friends section */
+.friends-container {
+  max-width: 1000px;
+  margin: auto;
+}
+
+.section-title {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: #1db954;
+}
+
+.friend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 0 20px;
+}
+
+.friend-card {
+  background-color: rgba(255, 255, 255, 0.08);
+  padding: 20px;
+  border: 1px solid #1db954;
+  border-radius: 12px;
+  text-align: center;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.friend-card:hover {
+  background-color: rgba(29, 185, 84, 0.2);
+  transform: scale(1.05);
+}
+
+.friend-card .username {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
