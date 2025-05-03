@@ -15,6 +15,11 @@
       <li><a href="/about">About</a></li>
       <li><a href="/friends">My Friends</a></li>
       <li><a href="/my-playlists">My Playlists</a></li>
+      <% if (user) { %>
+        <li><a href="/profile">My Profile</a></li>
+      <% } else { %>
+        <li><a href="/login">Login</a></li>
+      <% } %>
     </ul>
   </nav>
 
@@ -30,15 +35,6 @@
         <div class="bar"></div>
         <div class="bar"></div>
       </div>
-    </div>
-
-    <!-- Playlist Section -->
-    
-
-      <!-- Create Playlist Button -->
-      <form action="/create-playlist" method="get" class="create-playlist-form">
-        <button type="submit" class="create-btn">+ Create Playlist</button>
-      </form>
     </div>
   </main>
 </body>

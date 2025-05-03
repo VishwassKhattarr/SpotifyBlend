@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Playlists - Spotify Vibe</title>
+  <link rel="stylesheet" href="/styles/index.css" />
+  <style>
+    .playlist-list li {
+      cursor: pointer;
+      color: blue;
+      text-decoration: underline;
+      margin-bottom: 5px;
+    }
+    .song-list {
+      margin-top: 20px;
+    }
+    .song-list ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    .song-list li {
+      margin-bottom: 3px;
+    }
+    .add-songs-btn {
+      margin-top: 10px;
+      display: inline-block;
+      padding: 6px 12px;
+      background-color: #28a745;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">🎧 Spotify Vibe</div>
+    <ul class="nav-links">
+      <li><a href="/home">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/friends">My Friends</a></li>
+      <li><a href="/my-playlists">My Playlists</a></li>
+      <% if (user) { %>
+        <li><a href="/profile">My Profile</a></li>
+      <% } else { %>
+        <li><a href="/login">Login</a></li>
+      <% } %>
+    </ul>
+  </nav>
+
+  <main class="main-content">
+    <div class="container">
+      <h2>My Playlists</h2>
+
+      <form action="/create-playlist" method="get" class="create-playlist-form">
+        <button type="submit" class="create-btn">+ Create Playlist</button>
+      </form>
+
+      <% if (error) { %>
+        <p class="error-message"><%= error %></p>
+      <% } else if (playlists && playlists.length > 0) { %>
+        <ul class="playlist-list">
+          <% playlists.forEach(function(playlist) { %>
+            <li data-playlist-id="<%= playlist.PlaylistID %>"><%= playlist.PlaylistName %></li>
+          <% }); %>
+        </ul>
+        <div class="song-list" id="song-list">
+          <!-- Songs will be displayed here -->
+        </div>
+        <a href="#" id="add-songs-link" class="add-songs-btn" style="display:none;">Add More Songs</a>
+      <% } else { %>
+        <p>You have no playlists yet.</p>
+      <% } %>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const playlistItems = document.querySelectorAll('.playlist-list li');
+      const songListDiv = document.getElementById('song-list');
+      const addSongsLink = document.getElementById('add-songs-link');
+      let currentPlaylistId = null;
+
+      playlistItems.forEach(item => {
+        item.addEventListener('click', async () => {
+          const playlistId = item.getAttribute('data-playlist-id');
+          currentPlaylistId = playlistId;
+          try {
+            const response = await fetch(`/playlist/${playlistId}/songs`);
+            if (!response.ok) {
+              throw new Error('Failed to fetch songs');
+            }
+            const data = await response.json();
+            const songs = data.songs;
+            if (songs.length === 0) {
+              songListDiv.innerHTML = '<p>No songs in this playlist.</p>';
+            } else {
+              let html = '<h3>Songs in "' + item.textContent + '"</h3><ul>';
+              songs.forEach(song => {
+                html += `<li>${song.Title}</li>`;
+              });
+              html += '</ul>';
+              songListDiv.innerHTML = html;
+            }
+            // Show the add songs link and set href with playlistId
+            addSongsLink.style.display = 'inline-block';
+            addSongsLink.href = `/create-playlist?playlistId=${playlistId}`;
+          } catch (error) {
+            songListDiv.innerHTML = '<p>Error loading songs.</p>';
+            console.error(error);
+            addSongsLink.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

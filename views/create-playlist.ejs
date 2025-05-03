@@ -5,6 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Create Playlist</title>
   <link rel="stylesheet" href="/styles/create-playlist.css" />
+  <style>
+    #view-playlists-tick {
+      display: none;
+      font-size: 24px;
+      color: green;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
+  <script>
+    async function addSongToPlaylist(playlistId, songId, button) {
+      try {
+        const response = await fetch('/playlist/' + playlistId + '/add-song', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ songId: songId })
+        });
+        if (response.ok) {
+          // Remove the song item from the list
+          const songItem = button.parentElement;
+          songItem.remove();
+
+          // Show the tick icon
+          const tickIcon = document.getElementById('view-playlists-tick');
+          tickIcon.style.display = 'inline-block';
+        } else {
+          alert('Failed to add song to playlist.');
+        }
+      } catch (error) {
+        console.error('Error adding song to playlist:', error);
+        alert('Error adding song to playlist.');
+      }
+    }
+  </script>
 </head>
 <body>
 
@@ -15,23 +51,45 @@
       <li><a href="/">Home</a></li>
       <li><a href="/about">About</a></li>
       <li><a href="/my-playlists">My Playlists</a></li>
-      
       <li><a href="/my-friends">My Friends</a></li>
+      <% if (user) { %>
+        <li><a href="/profile">My Profile</a></li>
+      <% } else { %>
+        <li><a href="/login">Login</a></li>
+      <% } %>
     </ul>
   </nav>
 
   <!-- 📦 FORM CONTAINER -->
   <div class="container">
-    <h2>Create a New Playlist</h2>
-    <form action="/create-playlist" method="POST" class="playlist-form">
-      <label for="name">Playlist Name:</label>
-      <input type="text" id="name" name="name" placeholder="Enter playlist name" required />
+    <% if (user) { %>
+      <h2>Create a New Playlist</h2>
+      <% if (!playlistCreated) { %>
+        <form action="/create-playlist" method="POST" class="playlist-form">
+          <label for="name">Playlist Name:</label>
+          <input type="text" id="name" name="name" placeholder="Enter playlist name" required />
 
-      <label for="description">Description:</label>
-      <textarea id="description" name="description" placeholder="Add a short description..."></textarea>
-
-      <button type="submit">Create Playlist</button>
-    </form>
+          <button type="submit">Create Playlist</button>
+        </form>
+      <% } else { %>
+        <h3>Songs Available</h3>
+        <% if (songs && songs.length > 0) { %>
+          <ul>
+            <% songs.forEach(function(song) { %>
+              <li>
+                <%= song.Title %>
+                <button onclick="addSongToPlaylist('<%= playlistId %>', '<%= song.SongID %>', this)">+</button>
+              </li>
+            <% }); %>
+          </ul>
+          <a id="view-playlists-tick" href="/my-playlists" title="View Playlists">&#10003;</a>
+        <% } else { %>
+          <p>No songs available.</p>
+        <% } %>
+      <% } %>
+    <% } else { %>
+      <p>Please <a href="/login">log in</a> to create playlists.</p>
+    <% } %>
   </div>
 
 </body>

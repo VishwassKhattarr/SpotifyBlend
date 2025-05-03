@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Profile - Spotify Vibe</title>
+  <link rel="stylesheet" href="/styles/index.css" />
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">🎧 Spotify Vibe</div>
+    <ul class="nav-links">
+      <li><a href="/home">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/friends">My Friends</a></li>
+      <li><a href="/my-playlists">My Playlists</a></li>
+      <li><a href="/profile">My Profile</a></li>
+    </ul>
+  </nav>
+
+  <main class="main-content">
+    <div class="container">
+      <h2>My Profile</h2>
+      <% if (user) { %>
+        <ul>
+          <li><strong>User ID:</strong> <%= user.UserID %></li>
+          <li><strong>First Name:</strong> <%= user.Firstname %></li>
+          <li><strong>Last Name:</strong> <%= user.Lastname %></li>
+          <li><strong>Username:</strong> <%= user.Username %></li>
+          <li><strong>Email ID:</strong> <%= user.EmailID %></li>
+          <li><strong>Phone Number:</strong> <%= user.Phoneno %></li>
+        </ul>
+      <% } else { %>
+        <p>Please log in to view your profile.</p>
+      <% } %>
+    </div>
+  </main>
+</body>
+</html>
